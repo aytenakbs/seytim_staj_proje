@@ -75,9 +75,8 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      // Giriş işlemleri buraya eklenecek
-                    }
+                    //if (_formKey.currentState!.validate()) {
+                      // Giriş işlemleri buraya eklenecek}
                   },
                   style: ElevatedButton.styleFrom(
                     shape: RoundedRectangleBorder(

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "139424585343",
+    "project_id": "seytimstaj",
+    "storage_bucket": "seytimstaj.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:139424585343:android:cd60b0e690696bb33b514a",
+        "android_client_info": {
+          "package_name": "com.example.seytim_staj"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNiYUdv5ezdlPPQa5eSuv6T_ZWYr02t9Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

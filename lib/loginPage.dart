@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'registerPage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'etkinlikSayfasi.dart';
+import 'registerPage.dart'; // Kayıt ol sayfası için import
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -9,120 +12,118 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  bool _showButton = false;
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-    Future.delayed(const Duration(seconds: 1), () {
-      setState(() {
-        _showButton = true;
-      });
-    });
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final _formKey = GlobalKey<FormState>();
     return Scaffold(
-      body: Stack(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Logo
-                Center(
-                  child: Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: const Color(0xEC084CFF), width: 4),
-                      image: const DecorationImage(
-                        image: AssetImage('assets/logo.png'),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
+      appBar: AppBar(
+        backgroundColor: const Color(0xEC084CFF),
+        title: const Text('Giriş Yap'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              TextFormField(
+                controller: emailController,
+                decoration: const InputDecoration(
+                  labelText: 'E-posta',
                 ),
-                const SizedBox(height: 40),
-                // Form
-                Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          labelText: 'Kullanıcı Adı',
-                        ),
-                        validator: (value) =>
-                        value!.isEmpty ? 'Lütfen kullanıcı adınızı girin' : null,
-                      ),
-                      const SizedBox(height: 15),
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          labelText: 'Şifre',
-                        ),
-                        obscureText: true,
-                        validator: (value) =>
-                        value!.isEmpty ? 'Lütfen şifrenizi girin' : null,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    //if (_formKey.currentState!.validate()) {
-                      // Giriş işlemleri buraya eklenecek}
-                  },
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 15,
-                      horizontal: 50,
-                    ),
-                  ),
-                  child: const Text(
-                    'Giriş Yap',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Animasyonlu buton
-          AnimatedPositioned(
-            duration: const Duration(seconds: 2),
-            curve: Curves.easeInOut,
-            right: _showButton ? 20 : -200,
-            bottom: 50,
-            child: ElevatedButton.icon(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const RegisterPage()),
-                );
-              },
-              icon: const Icon(Icons.rocket_launch, size: 24),
-              label: const Text(
-                'Hâlâ üye olmadın mı?',
-                style: TextStyle(fontSize: 16),
+                keyboardType: TextInputType.emailAddress,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Lütfen geçerli bir e-posta adresi girin';
+                  }
+                  return null;
+                },
               ),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                backgroundColor: const Color(0x8508ECFF),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+              const SizedBox(height: 10),
+              TextFormField(
+                controller: passwordController,
+                decoration: const InputDecoration(
+                  labelText: 'Şifre',
+                ),
+                obscureText: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Lütfen şifrenizi girin';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    try {
+                      // Kullanıcı kimlik doğrulama
+                      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+                        email: emailController.text,
+                        password: passwordController.text,
+                      );
+
+                      // Firestore'dan kullanıcı kontrolü
+                      FirebaseFirestore firestore = FirebaseFirestore.instance;
+                      var userDoc = await firestore.collection('Kullanıcı bilgiler').doc(userCredential.user!.uid).get();
+
+                      if (userDoc.exists) {
+                        // Kullanıcı bilgileri Firestore'da mevcutsa Etkinlik sayfasına yönlendir
+                       Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => EtkinlikSayfasi()),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Kullanıcı bilgileri bulunamadı!')),
+                        );
+                      }
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Hata: ${e.toString()}')),
+                      );
+                    }
+                  }
+                },
+                child: const Text(
+                  'Giriş Yap',
+                  style: TextStyle(fontSize: 18),
                 ),
               ),
-            ),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Henüz üye olmadınız mı?'),
+                  TextButton(
+                    onPressed: () {
+                      // Register sayfasına yönlendirme
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const RegisterPage()),
+                      );
+                    },
+                    child: const Text(
+                      'Kayıt Ol',
+                      style: TextStyle(color: Color(0xEC084CFF)),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

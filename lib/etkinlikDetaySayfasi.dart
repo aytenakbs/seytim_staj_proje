@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 class EtkinlikDetayPage extends StatefulWidget {
+  final String etkinlikAdi;
+
+  const EtkinlikDetayPage({Key? key, required this.etkinlikAdi}) : super(key: key);
+
   @override
   _EtkinlikDetayPageState createState() => _EtkinlikDetayPageState();
 }
@@ -12,7 +16,7 @@ class _EtkinlikDetayPageState extends State<EtkinlikDetayPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Etkinlik Detayları', textAlign: TextAlign.center),
+        title: Text(widget.etkinlikAdi, textAlign: TextAlign.center),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -22,15 +26,8 @@ class _EtkinlikDetayPageState extends State<EtkinlikDetayPage> {
         centerTitle: true,
         backgroundColor: Colors.blueAccent,
       ),
-      body: Container(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          image: DecorationImage(
-            image: AssetImage('assets/transparan_arka_plan.png'), // Transparan resim
-            fit: BoxFit.cover,
-          ),
-        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -42,11 +39,11 @@ class _EtkinlikDetayPageState extends State<EtkinlikDetayPage> {
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Etkinlik Açıklaması: Bu bir örnek etkinlik açıklamasıdır. Daha fazla detay eklenebilir.',
+            Text(
+              'Etkinlik Açıklaması: ${widget.etkinlikAdi} hakkında detaylar burada yer alacak.',
               maxLines: 10,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 16),
+              style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 16),
             const Text(
@@ -56,11 +53,6 @@ class _EtkinlikDetayPageState extends State<EtkinlikDetayPage> {
             const SizedBox(height: 16),
             const Text(
               'Kontenjan: 25 kişi',
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Gereksinimler: Yaş sınırı vs.',
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 16),

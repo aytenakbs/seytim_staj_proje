@@ -11,6 +11,8 @@ dependencies:
   firebase_auth: any
   firebase_core: any
   firebase_auth_web: ^5.13.5
+  firebase_database: ^11.2.0
+  cloud_firestore: ^5.5.1
   flutter:
     sdk: flutter
   intl: ^0.20.1

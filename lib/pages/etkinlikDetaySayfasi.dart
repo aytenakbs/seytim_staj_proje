@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class EtkinlikDetayPage extends StatefulWidget {
   final String etkinlikAdi;
@@ -11,6 +12,9 @@ class EtkinlikDetayPage extends StatefulWidget {
 
 class _EtkinlikDetayPageState extends State<EtkinlikDetayPage> {
   bool isJoined = false;
+
+  // Google Maps için başlangıç konumu
+  static const LatLng etkinlikKonumu = LatLng(37.77483, -122.41942); // Örnek konum (San Francisco)
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +43,7 @@ class _EtkinlikDetayPageState extends State<EtkinlikDetayPage> {
           children: [
             Center(
               child: Image.asset(
-                'assets/etkinlik_resmi.png', // Etkinlik resmi
+                'assets/images/cocukatolye.jpeg', // Etkinlik resmi
                 height: 200,
                 fit: BoxFit.cover,
               ),
@@ -62,17 +66,32 @@ class _EtkinlikDetayPageState extends State<EtkinlikDetayPage> {
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 16),
-            Container(
+
+            // Google Maps Widget
+            SizedBox(
               height: 200,
               width: double.infinity,
-              color: Colors.grey.shade300,
-              child: const Center(
-                child: Text(
-                  'Harita Placeholder',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12), // Kenar yuvarlaklığı
+                child: GoogleMap(
+                  initialCameraPosition: const CameraPosition(
+                    target: etkinlikKonumu, // Başlangıç konumu
+                    zoom: 14.0,
+                  ),
+                  markers: {
+                    Marker(
+                      markerId: const MarkerId('etkinlikKonumu'),
+                      position: etkinlikKonumu,
+                      infoWindow: const InfoWindow(
+                        title: 'Etkinlik Konumu',
+                        snippet: 'San Francisco',
+                      ),
+                    ),
+                  },
                 ),
               ),
             ),
+
             const SizedBox(height: 16),
             Center(
               child: ElevatedButton(

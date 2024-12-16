@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'pages/registerPage.dart';
 import 'firebase_options.dart';
+import 'pages/etkinlikSayfasi.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,8 +25,8 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.white,
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white, // Buton yazı rengi
-            backgroundColor: const Color(0xFF8174A0), // Buton arka plan rengi
+            foregroundColor: Colors.white,
+            backgroundColor: const Color(0xFF8174A0),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -36,7 +35,7 @@ class MyApp extends StatelessWidget {
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: const Color(0xF5F5F5),
-          labelStyle: const TextStyle(color: Color(0xFF8174A0)), // Input alanı label rengi
+          labelStyle: const TextStyle(color: Color(0xFF8174A0)),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: const BorderSide(color: Color(0xFF8174A0)),
@@ -71,6 +70,27 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+  Future<void> loginWithEmailAndPassword() async {
+    try {
+      final userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+      // Giriş başarılı, etkinlik sayfasına yönlendir
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => EtkinlikSayfasi()),
+      );
+    } catch (e) {
+      // Giriş başarısız, hata mesajı göster
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Giriş başarısız: ${e.toString()}'),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,13 +100,12 @@ class _LoginPageState extends State<LoginPage> {
         elevation: 0,
         title: const Text(
           'TieNest',
-          style: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold), // AppBar başlık rengi
+          style: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
       body: Stack(
         children: [
-          // Arka plan resmi
           Opacity(
             opacity: 0.9,
             child: Container(
@@ -111,19 +130,16 @@ class _LoginPageState extends State<LoginPage> {
                         controller: emailController,
                         decoration: InputDecoration(
                           labelText: 'E-posta',
-                          labelStyle: const TextStyle(color: Color(0xFF8174A0)), // E-posta label rengi
+                          labelStyle: const TextStyle(color: Color(0xFF8174A0)),
                           filled: true,
-                          fillColor: const Color(0xFF8174A0).withOpacity(0.1), // Input arka plan rengi
+                          fillColor: const Color(0xFF8174A0).withOpacity(0.1),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: const BorderSide(color: Color(0xFF8174A0)),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: Color(0xFF8174A0), // Input aktif sınır rengi
-                              width: 2,
-                            ),
+                            borderSide: const BorderSide(color: Color(0xFF8174A0), width: 2),
                           ),
                         ),
                         keyboardType: TextInputType.emailAddress,
@@ -139,7 +155,7 @@ class _LoginPageState extends State<LoginPage> {
                         controller: passwordController,
                         decoration: InputDecoration(
                           labelText: 'Şifre',
-                          labelStyle: const TextStyle(color: Color(0xFF8174A0)), // Şifre label rengi
+                          labelStyle: const TextStyle(color: Color(0xFF8174A0)),
                           filled: true,
                           fillColor: const Color(0xFF8174A0).withOpacity(0.1),
                           enabledBorder: OutlineInputBorder(
@@ -148,10 +164,7 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: Color(0xFF8174A0),
-                              width: 2,
-                            ),
+                            borderSide: const BorderSide(color: Color(0xFF8174A0), width: 2),
                           ),
                         ),
                         obscureText: true,
@@ -164,20 +177,17 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       const SizedBox(height: 20),
                       ElevatedButton(
-                        onPressed: () async {
+                        onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                            // Giriş işlemleri burada
+                            loginWithEmailAndPassword();
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF8174A0), // Buton arka plan rengi
+                          backgroundColor: const Color(0xFF8174A0),
                         ),
                         child: const Text(
                           'Giriş Yap',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.white, // Buton yazı rengi
-                          ),
+                          style: TextStyle(fontSize: 18, color: Colors.white),
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -186,23 +196,15 @@ class _LoginPageState extends State<LoginPage> {
                         children: [
                           const Text(
                             'Henüz üye olmadınız mı?',
-                            style: TextStyle(
-                              color: Color(0xFF8174A0), // Soru metni rengi
-                            ),
+                            style: TextStyle(color: Color(0xFF8174A0)),
                           ),
                           TextButton(
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const RegisterPage()),
-                              );
+                              
                             },
                             child: const Text(
                               'Kayıt Ol',
-                              style: TextStyle(
-                                color: Color(0xFF8174A0), // Kayıt ol link rengi
-                              ),
+                              style: TextStyle(color: Color(0xFF8174A0)),
                             ),
                           ),
                         ],

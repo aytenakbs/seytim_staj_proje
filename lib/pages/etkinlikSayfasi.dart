@@ -18,19 +18,19 @@ class _EtkinlikSayfasiState extends State<EtkinlikSayfasi> {
   ];
 
   List<String> _filteredEtkinlikler = [];
-  String? _selectedDate; // Seçilen tarihi tutmak için bir değişken
-  String? _selectedLocation; // Seçilen konumu tutmak için bir değişken
-  int _currentIndex = 0; // Navigation bar'daki seçili sekme
+  String? _selectedDate;
+  String? _selectedLocation;
+  int _currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _filteredEtkinlikler = _etkinlikler; // Başlangıçta tüm etkinlikler gösterilir
+    _filteredEtkinlikler = _etkinlikler;
   }
 
   void _onNavBarTap(int index) {
     setState(() {
-      _currentIndex = index; // Seçili sekmeyi güncelle
+      _currentIndex = index;
     });
 
     switch (index) {
@@ -59,7 +59,6 @@ class _EtkinlikSayfasiState extends State<EtkinlikSayfasi> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Konum Seçici
               TextField(
                 onChanged: (value) {
                   setState(() {
@@ -68,14 +67,19 @@ class _EtkinlikSayfasiState extends State<EtkinlikSayfasi> {
                 },
                 decoration: InputDecoration(
                   hintText: "Konum seç...",
-                  prefixIcon: const Icon(Icons.location_on),
+                  hintStyle: TextStyle(color: Color(0xFF8174A0)),
+                  prefixIcon: const Icon(Icons.location_on, color: Color(0xFF8174A0)),
                   border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    borderSide: const BorderSide(color: Color(0xFF8174A0)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Color(0xFF8174A0)),
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                 ),
               ),
               const SizedBox(height: 16),
-              // Tarih Seçici
               TextField(
                 readOnly: true,
                 onTap: () async {
@@ -93,8 +97,14 @@ class _EtkinlikSayfasiState extends State<EtkinlikSayfasi> {
                 },
                 decoration: InputDecoration(
                   hintText: _selectedDate ?? "Tarih seç...",
-                  prefixIcon: const Icon(Icons.calendar_today),
+                  hintStyle: TextStyle(color: Color(0xFF8174A0)),
+                  prefixIcon: const Icon(Icons.calendar_today, color: Color(0xFF8174A0)),
                   border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                    borderSide: const BorderSide(color: Color(0xFF8174A0)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(color: Color(0xFF8174A0)),
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                 ),
@@ -102,19 +112,23 @@ class _EtkinlikSayfasiState extends State<EtkinlikSayfasi> {
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
-                  // Filtreleme işlemi
                   if (_selectedLocation != null || _selectedDate != null) {
                     final filtered = _etkinlikler.where((etkinlik) {
-                      // Konuma veya tarihe göre filtreleme mantığı buraya eklenebilir
-                      return true; // Örnek: Tüm etkinlikler eşleşiyor
+                      return true;
                     }).toList();
                     setState(() {
                       _filteredEtkinlikler = filtered;
                     });
                   }
-                  Navigator.pop(context); // Modalı kapat
+                  Navigator.pop(context);
                 },
-                child: const Text("Filtrele"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF8174A0),
+                ),
+                child: const Text(
+                  "Filtrele",
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ],
           ),
@@ -127,68 +141,99 @@ class _EtkinlikSayfasiState extends State<EtkinlikSayfasi> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Etkinlikler"),
-        centerTitle: true, // Başlık ortala
+        title: const Text("Etkinlikler",style:TextStyle(color:Colors.white) ),
+        centerTitle: true,
+        backgroundColor: const Color(0xFF8174A0),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            TextField(
-              onChanged: (query) {
-                final filtered = _etkinlikler
-                    .where((etkinlik) =>
-                    etkinlik.toLowerCase().contains(query.toLowerCase()))
-                    .toList();
-                setState(() {
-                  _filteredEtkinlikler = filtered;
-                });
-              },
-              decoration: InputDecoration(
-                hintText: "Etkinlik ara...",
-                prefixIcon: const Icon(Icons.manage_search_rounded),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+      body: Stack(
+        children: [
+          Opacity(
+            opacity: 0.7,
+            child: Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage("assets/images/backgrflower.jpeg"),
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: _openFilterModal, // Modal aç
-              child: const Text("Arama Filtrele"),
-            ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _filteredEtkinlikler.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 5),
-                    child: ListTile(
-                      title: Text(_filteredEtkinlikler[index]),
-                      leading: const Icon(Icons.event),
-                      trailing: const Icon(Icons.arrow_forward),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => EtkinlikDetayPage(
-                              etkinlikAdi: _filteredEtkinlikler[index],
-                            ),
-                          ),
-                        );
-                      },
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              children: [
+                TextField(
+                  onChanged: (query) {
+                    final filtered = _etkinlikler
+                        .where((etkinlik) =>
+                        etkinlik.toLowerCase().contains(query.toLowerCase()))
+                        .toList();
+                    setState(() {
+                      _filteredEtkinlikler = filtered;
+                    });
+                  },
+                  decoration: InputDecoration(
+                    hintText: "Etkinlik ara...",
+                    hintStyle: TextStyle(color: Color(0xFF8174A0)),
+                    prefixIcon: const Icon(Icons.manage_search_rounded, color: Color(0xFF8174A0)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                      borderSide: const BorderSide(color: Color(0xFF8174A0)),
                     ),
-                  );
-                },
-              ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Color(0xFF8174A0)),
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: _openFilterModal,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF8174A0),
+                  ),
+                  child: const Text(
+                    "Arama Filtrele",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: _filteredEtkinlikler.length,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        color: Colors.white,
+                        margin: const EdgeInsets.symmetric(vertical: 5),
+                        child: ListTile(
+                          title: Text(
+                            _filteredEtkinlikler[index],
+                            style: const TextStyle(color: Color(0xFF8174A0)),
+                          ),
+                          leading: const Icon(Icons.event, color: Color(0xFFA5B68D)),
+                          trailing: const Icon(Icons.arrow_forward, color: Color(0xFF8174A0)),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EtkinlikDetayPage(
+                                  etkinlikAdi: _filteredEtkinlikler[index],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       bottomNavigationBar: CustomNavigationBar(
         currentIndex: _currentIndex,
-
       ),
     );
   }

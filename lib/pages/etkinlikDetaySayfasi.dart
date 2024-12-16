@@ -15,16 +15,22 @@ class _EtkinlikDetayPageState extends State<EtkinlikDetayPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF4D1B6), // Arka plan rengi
       appBar: AppBar(
-        title: Text(widget.etkinlikAdi, textAlign: TextAlign.center),
+        title: const Text(
+          'Etkinlik Detayları', // Başlık değiştirildi
+          textAlign: TextAlign.center,
+        ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.white), // Simge rengi beyaz
           onPressed: () {
             Navigator.pop(context);
           },
         ),
         centerTitle: true,
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.transparent, // Şeffaf AppBar
+        elevation: 0, // Gölgeyi kaldırdık
+        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 20), // Yazı rengi beyaz
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),

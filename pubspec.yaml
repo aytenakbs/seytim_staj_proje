@@ -8,7 +8,8 @@ environment:
   sdk: ^3.6.0
 
 dependencies:
-  firebase_auth: any
+
+  firebase_auth: ^5.3.4
   firebase_core: any
   firebase_auth_web: ^5.13.5
   firebase_database: ^11.2.0

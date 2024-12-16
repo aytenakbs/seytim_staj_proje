@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'etkinlikDetaySayfasi.dart';
-import 'navigation_bar.dart';
+import '../widgets/navigation_bar.dart';
 
-class EtkinlikSayfasi extends StatefulWidget {
+class Etkinliklerim extends StatefulWidget {
+  const Etkinliklerim({Key? key}) : super(key: key);
+
   @override
-  _EtkinlikSayfasiState createState() => _EtkinlikSayfasiState();
+  _EtkinliklerimState createState() => _EtkinliklerimState();
 }
 
-class _EtkinlikSayfasiState extends State<EtkinlikSayfasi> {
+class _EtkinliklerimState extends State<Etkinliklerim> {
   final List<String> _etkinlikler = [
     "Flutter Workshop",
     "Teknoloji Konferansı",
@@ -20,7 +22,6 @@ class _EtkinlikSayfasiState extends State<EtkinlikSayfasi> {
   List<String> _filteredEtkinlikler = [];
   String? _selectedDate;
   String _kategoriArama = '';
-  int _currentIndex = 1; // Etkinlik sayfası varsayılan olarak seçili
 
   @override
   void initState() {
@@ -101,37 +102,11 @@ class _EtkinlikSayfasiState extends State<EtkinlikSayfasi> {
     }
   }
 
-  void _onNavBarTap(int index) {
-    if (index == _currentIndex) return;
-
-    setState(() {
-      _currentIndex = index;
-    });
-
-    switch (index) {
-      case 0:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const AnaSayfa()),
-        );
-        break;
-      case 1:
-      // Etkinlik sayfasındayız, hiçbir şey yapma
-        break;
-      case 2:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const AyarlarSayfasi()),
-        );
-        break;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Etkinlikler"),
+        title: const Text("Etkinliklerim"),
         centerTitle: true,
       ),
       body: Padding(
@@ -174,8 +149,7 @@ class _EtkinlikSayfasiState extends State<EtkinlikSayfasi> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                EtkinlikDetayPage(etkinlikAdi: _filteredEtkinlikler[index]),
+                            builder: (context) => EtkinlikDetayPage(etkinlikAdi: _filteredEtkinlikler[index]),
                           ),
                         );
                       },
@@ -187,32 +161,7 @@ class _EtkinlikSayfasiState extends State<EtkinlikSayfasi> {
           ],
         ),
       ),
-      bottomNavigationBar: CustomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: _onNavBarTap,
-      ),
-    );
-  }
-}
-
-class AnaSayfa extends StatelessWidget {
-  const AnaSayfa({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: const Center(child: Text("Ana Sayfa")),
-    );
-  }
-}
-
-class AyarlarSayfasi extends StatelessWidget {
-  const AyarlarSayfasi({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: const Center(child: Text("Ayarlar Sayfası")),
+      bottomNavigationBar: CustomNavigationBar(currentIndex: 1),
     );
   }
 }

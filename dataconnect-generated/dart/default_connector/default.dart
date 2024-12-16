@@ -1,29 +1,47 @@
-import 'dart:convert';
-import 'dart:io'; // Ortam değişkenleri için gerekli
+import 'dart:io'; // Ortam değişkenleri için
 
+// ConnectorConfig sınıfı
+class ConnectorConfig {
+  final String region;
+  final String connector;
+  final String projectId;
+
+  ConnectorConfig(this.region, this.connector, this.projectId);
+}
+
+// FirebaseDataConnect sınıfı
+class FirebaseDataConnect {
+  static FirebaseDataConnect instanceFor({
+    required ConnectorConfig connectorConfig,
+    required String sdkType,
+  }) {
+    // Firebase bağlantısı oluşturma (örnek)
+    print('Firebase bağlantısı oluşturuluyor...');
+    print('Region: ${connectorConfig.region}');
+    print('Connector: ${connectorConfig.connector}');
+    print('Project ID: ${connectorConfig.projectId}');
+    return FirebaseDataConnect();
+  }
+}
+
+// CallerSDKType sınıfı
+class CallerSDKType {
+  static const String generated = 'generated';
+}
+
+// DefaultConnector sınıfı
 class DefaultConnector {
-  // Statik yapılandırma tanımı (Ortam değişkenlerinden değerler alınıyor)
-  static final ConnectorConfig connectorConfig = ConnectorConfig(
-    Platform.environment['REGION'] ?? 'us-central1',
-    Platform.environment['CONNECTOR'] ?? 'default',
-    Platform.environment['PROJECT_ID'] ?? 'seytim_staj',
-  );
+  static late final ConnectorConfig connectorConfig;
 
-  // Singleton (Tekil) instance tanımı
   static final DefaultConnector _instance = DefaultConnector._internal();
 
-  // Firebase bağlantısı
   final FirebaseDataConnect dataConnect;
 
-  // Özel bir constructor (statik instance ile ilişkili)
   DefaultConnector._internal({FirebaseDataConnect? customDataConnect})
-      : dataConnect = customDataConnect ??
-      _initializeFirebaseConnection();
+      : dataConnect = customDataConnect ?? _initializeFirebaseConnection();
 
-  // Singleton instance döndürme
   static DefaultConnector get instance => _instance;
 
-  // Firebase bağlantısı oluşturma (Hata yönetimi ile birlikte)
   static FirebaseDataConnect _initializeFirebaseConnection() {
     try {
       return FirebaseDataConnect.instanceFor(
@@ -31,9 +49,35 @@ class DefaultConnector {
         sdkType: CallerSDKType.generated,
       );
     } catch (e) {
-      // Hata yönetimi
       print('Firebase bağlantısı sırasında bir hata oluştu: $e');
       rethrow;
     }
   }
+
+  // Ortam değişkenlerini okuma
+  static void initializeConfig() {
+    if (Platform.environment.isNotEmpty) {
+      // CLI ortamı için ortam değişkenlerini kullan
+      connectorConfig = ConnectorConfig(
+        Platform.environment['REGION'] ?? 'us-central1',
+        Platform.environment['CONNECTOR'] ?? 'default',
+        Platform.environment['PROJECT_ID'] ?? 'seytim_staj',
+      );
+    } else {
+      // Ortam değişkenleri yoksa varsayılan değerler
+      connectorConfig = ConnectorConfig('us-central1', 'default', 'seytim_staj');
+    }
+    print('Bağlantı yapılandırması başarıyla yüklendi.');
+  }
+}
+
+void main() {
+  // DefaultConnector yapılandırmasını başlat
+  DefaultConnector.initializeConfig();
+
+  // Singleton instance'ı alın
+  final connector = DefaultConnector.instance;
+
+  // Bağlantıyı test etmek için
+  print('Bağlantı başarıyla oluşturuldu: ${connector.dataConnect}');
 }

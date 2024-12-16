@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'profilUpdate.dart'; // Güncelleme sayfasının dosyası
-import 'navigation_bar.dart'; // Navigation bar widget'ını ekle
+import '../widgets/navigation_bar.dart';
 
 void main() {
   runApp(MyApp());
@@ -156,7 +156,6 @@ class _ProfilPageState extends State<ProfilPage> {
       ),
       bottomNavigationBar: CustomNavigationBar(
         currentIndex: _currentIndex,
-        onTap: _onNavBarTap,
       ),
     );
   }

@@ -1,167 +1,94 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'etkinlikDetaySayfasi.dart';
-import '../widgets/navigation_bar.dart';
+import 'package:seytim_staj/widgets/navigation_bar.dart';
+import 'package:seytim_staj/pages/etkinlikDetaySayfasi.dart';
+import 'package:seytim_staj/pages/etkinlikSayfasi.dart'; // Etkinlik modelini import ediyoruz
 
 class Etkinliklerim extends StatefulWidget {
-  const Etkinliklerim({Key? key}) : super(key: key);
-
   @override
   _EtkinliklerimState createState() => _EtkinliklerimState();
 }
 
 class _EtkinliklerimState extends State<Etkinliklerim> {
-  final List<String> _etkinlikler = [
-    "Flutter Workshop",
-    "Teknoloji Konferansı",
-    "Mobil Geliştirici Buluşması",
-    "Konser",
-    "Tasarım ve UX Eğitimi"
+  final List<Etkinlik> _etkinlikler = [
+    Etkinlik(
+      baslik: "Anne Çocuk Etkinliği",
+      aciklama: "Bu etkinlik, anneler ve çocukların birlikte keyifli vakit geçirebileceği eşsiz aktiviteler sunuyor. Çocuklar 'Duygularımızı Canlandıralım mı?' atölyesi ile sanat aracılığıyla duygularını ifade etmeyi öğreniyor. 'Zuzu ile Çöpleri Çöpten Kurtarıyoruz' etkinliği, çevre bilinci oluşturarak müzik ve hikaye anlatımıyla çocuklara doğayı sevdiriyor. Lego ve robotik atölyelerinde, minik mühendisler STEM becerilerini geliştirme şansı buluyor. Anneler için de rehberlik sunan bu etkinlik, hem eğitici hem de eğlenceli bir deneyim sunuyor.",
+      tarihSaat: "12 Aralık 2025, 10:00",
+      fotoUrl: "assets/images/cocukatolye.jpeg",
+      konum: "Adana, Türkiye",
+      kontenjan: 20,
+      ikon: Icons.family_restroom,
+    ),
+    Etkinlik(
+      baslik: "Yoga Etkinliği",
+      aciklama: "Bu etkinlik, hem bedeninizi hem de ruhunuzu yenilemek için mükemmel bir fırsat. Sabah seanslarında enerji artırıcı yoga pratikleriyle güne zinde başlayabilirsiniz. Hatha Yoga dersleri, temel pozlar ve nefes teknikleriyle bedeninize esneklik ve güç kazandıracak. Surya Namaskara (Güneşe Selam) hareket serisi, geleneksel bir yoga deneyimi sunarak zihninizi dinginleştirecek. Adana'nın huzurlu atmosferinde düzenlenen bu etkinlik, içsel bir yolculuk için idealdir.",
+      tarihSaat: "15 Aralık 2024, 09:00",
+      fotoUrl: "assets/images/yogaatolye.jpeg",
+      konum: "Adana, Türkiye",
+      kontenjan: 30,
+      ikon: Icons.spa,
+    ),
+
+    // Diğer etkinlikler...
   ];
 
-  List<String> _filteredEtkinlikler = [];
-  String? _selectedDate;
-  String _kategoriArama = '';
-
-  @override
-  void initState() {
-    super.initState();
-    _filteredEtkinlikler = _etkinlikler;
-  }
-
-  void _openSearchModal() {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+  void _navigateToDetailPage(Etkinlik etkinlik) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EtkinlikDetayPage(etkinlik: etkinlik),
       ),
-      isScrollControlled: true,
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                "Etkinlik Ara",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                decoration: const InputDecoration(
-                  hintText: "Kategori girin...",
-                  border: OutlineInputBorder(),
-                ),
-                onChanged: (value) {
-                  _kategoriArama = value;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                decoration: InputDecoration(
-                  hintText: "Tarih: ${_selectedDate ?? "Seçin"}",
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.calendar_today),
-                    onPressed: () => _selectDate(context),
-                  ),
-                  border: const OutlineInputBorder(),
-                ),
-                readOnly: true,
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    _filteredEtkinlikler = _etkinlikler.where((etkinlik) {
-                      return etkinlik.toLowerCase().contains(_kategoriArama.toLowerCase());
-                    }).toList();
-                  });
-                  Navigator.pop(context);
-                },
-                child: const Text("Ara"),
-              ),
-            ],
-          ),
-        );
-      },
     );
-  }
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? selected = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-
-    if (selected != null) {
-      setState(() {
-        _selectedDate = DateFormat('yyyy-MM-dd').format(selected);
-      });
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Etkinliklerim"),
+        title: const Text("Etkinliklerim", style: TextStyle(color: Colors.white)),
         centerTitle: true,
+        backgroundColor: const Color(0xFF8174A0),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            TextField(
-              onChanged: (query) {
-                setState(() {
-                  _filteredEtkinlikler = _etkinlikler
-                      .where((etkinlik) => etkinlik.toLowerCase().contains(query.toLowerCase()))
-                      .toList();
-                });
-              },
-              decoration: InputDecoration(
-                hintText: "Etkinlik ara...",
-                prefixIcon: const Icon(Icons.manage_search_rounded),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+      body: Stack(
+        children: [
+          Opacity(
+            opacity: 0.7,
+            child: Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage("assets/images/backgrflower.jpeg"),
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: _openSearchModal,
-              child: const Text("Arama ve Filtrele"),
-            ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _filteredEtkinlikler.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 5),
-                    child: ListTile(
-                      title: Text(_filteredEtkinlikler[index]),
-                      leading: const Icon(Icons.event),
-                      trailing: const Icon(Icons.arrow_forward),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => EtkinlikDetayPage(etkinlikAdi: _filteredEtkinlikler[index]),
-                          ),
-                        );
-                      },
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ListView.builder(
+              itemCount: _etkinlikler.length,
+              itemBuilder: (context, index) {
+                final etkinlik = _etkinlikler[index];
+                return Card(
+                  color: Colors.white,
+                  margin: const EdgeInsets.symmetric(vertical: 5),
+                  child: ListTile(
+                    title: Text(
+                      etkinlik.baslik,
+                      style: const TextStyle(color: Color(0xFF8174A0)),
                     ),
-                  );
-                },
-              ),
+                    leading: Icon(etkinlik.ikon, color: const Color(0xFFA5B68D)),
+                    trailing: const Icon(Icons.arrow_forward, color: Color(0xFF8174A0)),
+                    onTap: () => _navigateToDetailPage(etkinlik),
+                  ),
+                );
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-      bottomNavigationBar: CustomNavigationBar(currentIndex: 1),
+      bottomNavigationBar: CustomNavigationBar(
+        currentIndex: 0,
+      ),
     );
   }
 }

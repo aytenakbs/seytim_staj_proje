@@ -1,40 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+
+import 'etkinlikSayfasi.dart';
 
 class EtkinlikDetayPage extends StatefulWidget {
-  final String etkinlikAdi;
+  final Etkinlik etkinlik;
 
-  const EtkinlikDetayPage({Key? key, required this.etkinlikAdi}) : super(key: key);
+  const EtkinlikDetayPage({Key? key, required this.etkinlik}) : super(key: key);
 
   @override
-  _EtkinlikDetayPageState createState() => _EtkinlikDetayPageState();
+  State<EtkinlikDetayPage> createState() => _EtkinlikDetayPageState();
 }
 
 class _EtkinlikDetayPageState extends State<EtkinlikDetayPage> {
-  bool isJoined = false;
-
-  // Google Maps için başlangıç konumu
-  static const LatLng etkinlikKonumu = LatLng(37.77483, -122.41942); // Örnek konum (San Francisco)
+  final LatLng initialPosition = LatLng(36.998487, 35.328761);
+  bool isJoined = false; // Buton için state
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF4D1B6), // Arka plan rengi
+      backgroundColor: const Color(0xFFF4D1B6),
       appBar: AppBar(
         title: const Text(
-          'Etkinlik Detayları', // Başlık değiştirildi
+          'Etkinlik Detayları',
           textAlign: TextAlign.center,
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white), // Simge rengi beyaz
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
         centerTitle: true,
-        backgroundColor: Colors.transparent, // Şeffaf AppBar
-        elevation: 0, // Gölgeyi kaldırdık
-        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 20), // Yazı rengi beyaz
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 20),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -43,56 +44,70 @@ class _EtkinlikDetayPageState extends State<EtkinlikDetayPage> {
           children: [
             Center(
               child: Image.asset(
-                'assets/images/cocukatolye.jpeg', // Etkinlik resmi
+                widget.etkinlik.fotoUrl,
                 height: 200,
                 fit: BoxFit.cover,
               ),
             ),
             const SizedBox(height: 16),
             Text(
-              'Etkinlik Açıklaması: ${widget.etkinlikAdi} hakkında detaylar burada yer alacak.',
+              'Etkinlik Açıklaması: ${widget.etkinlik.aciklama}',
               maxLines: 10,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Tarih ve Saat: 12 Aralık 2024, 18:00',
-              style: TextStyle(fontSize: 16),
+            Text(
+              'Tarih ve Saat: ${widget.etkinlik.tarihSaat}',
+              style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Kontenjan: 25 kişi',
-              style: TextStyle(fontSize: 16),
+            Text(
+              'Konum: ${widget.etkinlik.konum}',
+              style: const TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 16),
-
-            // Google Maps Widget
-            SizedBox(
+            Text(
+              'Kontenjan: ${widget.etkinlik.kontenjan} kişi',
+              style: const TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 16),
+            Container(
               height: 200,
               width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8.0),
+                border: Border.all(color: Colors.grey),
+              ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(12), // Kenar yuvarlaklığı
-                child: GoogleMap(
-                  initialCameraPosition: const CameraPosition(
-                    target: etkinlikKonumu, // Başlangıç konumu
+                borderRadius: BorderRadius.circular(8.0),
+                child: FlutterMap(
+                  options: MapOptions(
+                    center: initialPosition,
                     zoom: 14.0,
                   ),
-                  markers: {
-                    Marker(
-                      markerId: const MarkerId('etkinlikKonumu'),
-                      position: etkinlikKonumu,
-                      infoWindow: const InfoWindow(
-                        title: 'Etkinlik Konumu',
-                        snippet: 'San Francisco',
-                      ),
+                  children: [
+                    TileLayer(
+                      urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                      subdomains: ['a', 'b', 'c'],
                     ),
-                  },
+                    MarkerLayer(
+                      markers: [
+                        Marker(
+                          point: initialPosition,
+                          builder: (context) => const Icon(
+                            Icons.location_on,
+                            size: 40.0,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ),
-
-            const SizedBox(height: 16),
+            const SizedBox(height: 32), // Alt kısım için boşluk
             Center(
               child: ElevatedButton(
                 onPressed: () {
@@ -101,7 +116,7 @@ class _EtkinlikDetayPageState extends State<EtkinlikDetayPage> {
                   });
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: isJoined ? Colors.red : Colors.green,
+                  backgroundColor: isJoined ? const Color(0xFFD37676) : const Color(0xFF9DBC98),
                   padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                 ),
                 child: Text(

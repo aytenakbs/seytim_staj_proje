@@ -17,6 +17,8 @@ dependencies:
   firebase_database: ^11.2.0
   cloud_firestore: ^5.5.1
   google_maps_flutter: ^2.10.0
+  flutter_map: ^5.0.0
+  latlong2: ^0.9.1
   flutter:
     sdk: flutter
   intl: ^0.20.1
@@ -38,5 +40,9 @@ flutter:
     - assets/images/yogaatolye.jpeg
     - assets/images/woman.jpeg
     - assets/images/backgrflower.jpeg
+    - assets/images/golf.jpeg
+    - assets/images/sanat.jpeg
+    - assets/images/ANNECOCUK.jpeg
+    - assets/images/tek.jpeg
 
   uses-material-design: true

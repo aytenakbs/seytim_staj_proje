@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:seytim_staj/pages/registerPage.dart';
 import 'firebase_options.dart';
 import 'pages/etkinlikSayfasi.dart';
 
@@ -200,7 +201,12 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           TextButton(
                             onPressed: () {
-                              
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const RegisterPage(),
+                                ),
+                              );
                             },
                             child: const Text(
                               'Kayıt Ol',
